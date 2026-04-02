@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "Football Live"
+  },
+  "navbar": {
+    "menu": "Menu",
+    "home": "Home",
+    "search": "Search",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "languageLabel": "Language"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact"
+  },
+  "home": {
+    "pageTitle": "International Friendly Matches",
+    "seoDescription": "Modern football matches homepage with live international friendlies.",
+    "introTitle": "Live Match Center",
+    "introText": "Track international friendlies in real time with clean cards, clear status labels, and quick access to stream details.",
+    "timezone": "Cairo Time",
+    "schedule": "Match Schedule",
+    "yesterday": "Yesterday Matches",
+    "today": "Today Matches",
+    "tomorrow": "Tomorrow Matches",
+    "live": "Live Now",
+    "upcoming": "Not Started",
+    "finished": "Finished",
+    "competition": "Competition",
+    "channel": "Channel",
+    "empty": "No international friendly matches found for this day."
+  },
+  "search": {
+    "title": "Search & Filter",
+    "seoDescription": "Filter football matches by league, date, and status.",
+    "allLeagues": "All Leagues",
+    "allStatus": "All Status",
+    "live": "Live",
+    "upcoming": "Upcoming",
+    "finished": "Finished"
+  },
+  "match": {
+    "detailsButton": "Match Details",
+    "notFound": "Match not found",
+    "loadDetailsError": "Unable to load match details.",
+    "playerTitle": "Match Stream Player",
+    "liveCenterTitle": "Live Match Center",
+    "liveCenterDescription": "Live details are shown inside this page and refresh automatically.",
+    "liveMinute": "Minute",
+    "seoDescriptionSuffix": "live stream and match details.",
+    "channelFallback": "N/A"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The requested page could not be found.",
+    "message": "The page you are looking for does not exist.",
+    "backHome": "Back Home"
+  },
+  "common": {
+    "loadMatchesError": "Failed to load matches. Please try again."
+  }
+}

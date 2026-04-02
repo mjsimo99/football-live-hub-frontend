@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "Football Live"
+  },
+  "navbar": {
+    "menu": "Menu",
+    "home": "Accueil",
+    "search": "Recherche",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "languageLabel": "Langue"
+  },
+  "footer": {
+    "rights": "Tous droits reserves.",
+    "privacy": "Confidentialite",
+    "terms": "Conditions",
+    "contact": "Contact"
+  },
+  "home": {
+    "pageTitle": "Matchs amicaux internationaux",
+    "seoDescription": "Page moderne des matchs de football avec les amicaux internationaux en direct.",
+    "introTitle": "Centre des matchs en direct",
+    "introText": "Suivez les amicaux internationaux en temps reel avec des cartes claires, des statuts visibles et un acces rapide aux details du flux.",
+    "timezone": "Heure du Caire",
+    "schedule": "Programme des matchs",
+    "yesterday": "Matchs d’hier",
+    "today": "Matchs d’aujourd’hui",
+    "tomorrow": "Matchs de demain",
+    "live": "En direct",
+    "upcoming": "Pas encore commence",
+    "finished": "Termine",
+    "competition": "Competition",
+    "channel": "Chaine",
+    "empty": "Aucun match amical international pour cette journee."
+  },
+  "search": {
+    "title": "Recherche et filtres",
+    "seoDescription": "Filtrer les matchs par championnat, date et statut.",
+    "allLeagues": "Tous les championnats",
+    "allStatus": "Tous les statuts",
+    "live": "En direct",
+    "upcoming": "A venir",
+    "finished": "Termine"
+  },
+  "match": {
+    "detailsButton": "Details du match",
+    "notFound": "Match introuvable",
+    "loadDetailsError": "Impossible de charger les details du match.",
+    "playerTitle": "Lecteur du match",
+    "liveCenterTitle": "Centre du match en direct",
+    "liveCenterDescription": "Les details en direct sont affiches sur cette page avec actualisation automatique.",
+    "liveMinute": "Minute",
+    "seoDescriptionSuffix": "streaming en direct et details du match.",
+    "channelFallback": "Indisponible"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page demandee est introuvable.",
+    "message": "La page que vous recherchez n'existe pas.",
+    "backHome": "Retour a l'accueil"
+  },
+  "common": {
+    "loadMatchesError": "Echec du chargement des matchs. Veuillez reessayer."
+  }
+}
