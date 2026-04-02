@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import SEO from '../components/common/SEO'
 import FriendlyMatchCard from '../components/matches/FriendlyMatchCard'
 import { useMatches } from '../hooks/useMatches'
@@ -89,18 +89,68 @@ const getCairoDate = (dayOffset: number): string => {
 
 const HomePage = () => {
   const [activeDay, setActiveDay] = useState<DayTab>('today')
+  const [tabLoading, setTabLoading] = useState(false)
+  const tabTimerRef = useRef<number | null>(null)
   const { language, t } = useLanguage()
   const { theme } = useTheme()
   const isRtl = language === 'ar'
   const isDark = theme === 'dark'
-  const today = getCairoDate(0)
-  const yesterday = getCairoDate(-1)
-  const tomorrow = getCairoDate(1)
+  const { data: allMatches, loading, error } = useMatches()
+  const fallbackToday = getCairoDate(0)
+  const fallbackYesterday = getCairoDate(-1)
+  const fallbackTomorrow = getCairoDate(1)
 
-  const dayToDateMap: Record<DayTab, string> = { yesterday, today, tomorrow }
+  const dayToDateMap = useMemo(() => {
+    const uniqueDates = Array.from(new Set(allMatches.map((match) => match.date))).sort()
+    if (uniqueDates.length === 0) {
+      return {
+        yesterday: fallbackYesterday,
+        today: fallbackToday,
+        tomorrow: fallbackTomorrow,
+      } satisfies Record<DayTab, string>
+    }
+
+    const todayTs = new Date(fallbackToday).getTime()
+    let nearestIndex = 0
+    let nearestDiff = Number.POSITIVE_INFINITY
+
+    uniqueDates.forEach((date, index) => {
+      const diff = Math.abs(new Date(date).getTime() - todayTs)
+      if (diff < nearestDiff) {
+        nearestDiff = diff
+        nearestIndex = index
+      }
+    })
+
+    return {
+      yesterday: uniqueDates[Math.max(nearestIndex - 1, 0)],
+      today: uniqueDates[nearestIndex],
+      tomorrow: uniqueDates[Math.min(nearestIndex + 1, uniqueDates.length - 1)],
+    } satisfies Record<DayTab, string>
+  }, [allMatches, fallbackToday, fallbackTomorrow, fallbackYesterday])
+
   const selectedDate = dayToDateMap[activeDay]
-  const { data: allMatches, loading, error } = useMatches({ date: selectedDate })
   const activeIndex = activeDay === 'yesterday' ? 0 : activeDay === 'today' ? 1 : 2
+
+  const handleTabChange = (day: DayTab) => {
+    if (day === activeDay) return
+    setTabLoading(true)
+    setActiveDay(day)
+    if (tabTimerRef.current) {
+      window.clearTimeout(tabTimerRef.current)
+    }
+    tabTimerRef.current = window.setTimeout(() => {
+      setTabLoading(false)
+    }, 180)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (tabTimerRef.current) {
+        window.clearTimeout(tabTimerRef.current)
+      }
+    }
+  }, [])
 
   const filteredMatches = useMemo(() => {
     const matchesByDate = allMatches.filter((match) => match.date === selectedDate)
@@ -140,7 +190,8 @@ const HomePage = () => {
       return score
     }
 
-    const sorted = [...importantOnly].sort((a, b) => scoreMatch(b) - scoreMatch(a))
+    const sourceMatches = importantOnly.length > 0 ? importantOnly : nonExcluded
+    const sorted = [...sourceMatches].sort((a, b) => scoreMatch(b) - scoreMatch(a))
 
     // Smart list: show only the most relevant matches.
     return sorted.slice(0, 12)
@@ -216,7 +267,7 @@ const HomePage = () => {
             <div className="relative grid grid-cols-3">
               <button
                 type="button"
-                onClick={() => setActiveDay('yesterday')}
+                onClick={() => handleTabChange('yesterday')}
                 className={`rounded-full py-2 text-sm font-bold transition ${
                   activeDay === 'yesterday'
                     ? isDark ? 'text-slate-900' : 'text-white'
@@ -227,7 +278,7 @@ const HomePage = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setActiveDay('today')}
+                onClick={() => handleTabChange('today')}
                 className={`rounded-full py-2 text-sm font-bold transition ${
                   activeDay === 'today'
                     ? isDark ? 'text-slate-900' : 'text-white'
@@ -238,7 +289,7 @@ const HomePage = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setActiveDay('tomorrow')}
+                onClick={() => handleTabChange('tomorrow')}
                 className={`rounded-full py-2 text-sm font-bold transition ${
                   activeDay === 'tomorrow'
                     ? isDark ? 'text-slate-900' : 'text-white'
@@ -258,7 +309,7 @@ const HomePage = () => {
             <p className={`rounded-xl p-4 text-center ${isDark ? 'bg-white/10 text-slate-100' : 'bg-white/80 text-slate-700'}`}>{t('home.empty')}</p>
           )}
 
-          {filteredMatches.map((match) => (
+          {!loading && !tabLoading && filteredMatches.map((match) => (
             <FriendlyMatchCard
               key={match.id}
               match={match}
@@ -270,7 +321,7 @@ const HomePage = () => {
             />
           ))}
 
-          {loading && (
+          {(loading || tabLoading) && (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, index) => (
                 <div
