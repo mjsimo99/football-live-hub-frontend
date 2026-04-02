@@ -1,0 +1,128 @@
+[
+  {
+    "id": "m-001",
+    "league": "International Friendly Matches",
+    "competitionName": "International Friendly Matches",
+    "broadcastChannel": "beIN Sports 1",
+    "date": "2026-03-29",
+    "kickoffTime": "19:30",
+    "status": "FINISHED",
+    "stadium": "Al Bayt Stadium",
+    "homeTeam": {
+      "id": "t-egy",
+      "name": "مصر",
+      "logo": "https://flagcdn.com/w80/eg.png"
+    },
+    "awayTeam": {
+      "id": "t-mar",
+      "name": "المغرب",
+      "logo": "https://flagcdn.com/w80/ma.png"
+    },
+    "thumbnail": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1200&auto=format&fit=crop",
+    "score": { "home": 1, "away": 1 },
+    "streams": [
+      { "id": "s1", "name": "Server 1", "iframeUrl": "https://www.youtube.com/embed/jfKfPfyJRdk" },
+      { "id": "s2", "name": "Server 2", "iframeUrl": "https://www.youtube.com/embed/5qap5aO4i9A" }
+    ]
+  },
+  {
+    "id": "m-002",
+    "league": "International Friendly Matches",
+    "competitionName": "International Friendly Matches",
+    "broadcastChannel": "Abu Dhabi Sports",
+    "date": "2026-03-30",
+    "kickoffTime": "20:00",
+    "status": "LIVE",
+    "stadium": "Cairo International Stadium",
+    "homeTeam": {
+      "id": "t-fra",
+      "name": "France",
+      "logo": "https://flagcdn.com/w80/fr.png"
+    },
+    "awayTeam": {
+      "id": "t-eng",
+      "name": "England",
+      "logo": "https://flagcdn.com/w80/gb-eng.png"
+    },
+    "thumbnail": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1200&auto=format&fit=crop",
+    "minute": 58,
+    "score": { "home": 2, "away": 1 },
+    "streams": [
+      { "id": "s1", "name": "Server 1", "iframeUrl": "https://www.youtube.com/embed/jfKfPfyJRdk" },
+      { "id": "s2", "name": "Server 2", "iframeUrl": "https://www.youtube.com/embed/5qap5aO4i9A" }
+    ]
+  },
+  {
+    "id": "m-003",
+    "league": "International Friendly Matches",
+    "competitionName": "International Friendly Matches",
+    "broadcastChannel": "SSC Extra 1",
+    "date": "2026-03-30",
+    "kickoffTime": "22:00",
+    "status": "UPCOMING",
+    "stadium": "King Fahd Stadium",
+    "homeTeam": {
+      "id": "t-bra",
+      "name": "Brasil",
+      "logo": "https://flagcdn.com/w80/br.png"
+    },
+    "awayTeam": {
+      "id": "t-arg",
+      "name": "Argentina",
+      "logo": "https://flagcdn.com/w80/ar.png"
+    },
+    "thumbnail": "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=1200&auto=format&fit=crop",
+    "streams": [
+      { "id": "s1", "name": "Server 1", "iframeUrl": "https://www.youtube.com/embed/jfKfPfyJRdk" },
+      { "id": "s2", "name": "Server 2", "iframeUrl": "https://www.youtube.com/embed/5qap5aO4i9A" }
+    ]
+  },
+  {
+    "id": "m-004",
+    "league": "International Friendly Matches",
+    "competitionName": "International Friendly Matches",
+    "broadcastChannel": "ON Time Sports",
+    "date": "2026-03-31",
+    "kickoffTime": "19:30",
+    "status": "UPCOMING",
+    "stadium": "Doha Stadium",
+    "homeTeam": {
+      "id": "t-esp",
+      "name": "Espana",
+      "logo": "https://flagcdn.com/w80/es.png"
+    },
+    "awayTeam": {
+      "id": "t-ita",
+      "name": "Italia",
+      "logo": "https://flagcdn.com/w80/it.png"
+    },
+    "thumbnail": "https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=1200&auto=format&fit=crop",
+    "streams": [
+      { "id": "s1", "name": "Server 1", "iframeUrl": "https://www.youtube.com/embed/jfKfPfyJRdk" }
+    ]
+  },
+  {
+    "id": "m-005",
+    "league": "International Friendly Matches",
+    "competitionName": "International Friendly Matches",
+    "broadcastChannel": "TF1",
+    "date": "2026-03-31",
+    "kickoffTime": "21:00",
+    "status": "UPCOMING",
+    "stadium": "Paris National Arena",
+    "homeTeam": {
+      "id": "t-ger",
+      "name": "Deutschland",
+      "logo": "https://flagcdn.com/w80/de.png"
+    },
+    "awayTeam": {
+      "id": "t-por",
+      "name": "Portugal",
+      "logo": "https://flagcdn.com/w80/pt.png"
+    },
+    "thumbnail": "https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=1200&auto=format&fit=crop",
+    "streams": [
+      { "id": "s1", "name": "Server 1", "iframeUrl": "https://www.youtube.com/embed/jfKfPfyJRdk" }
+    ]
+  }
+]
