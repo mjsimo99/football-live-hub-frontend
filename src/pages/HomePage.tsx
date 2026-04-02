@@ -1,77 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import SEO from '../components/common/SEO'
 import FriendlyMatchCard from '../components/matches/FriendlyMatchCard'
 import { useMatches } from '../hooks/useMatches'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
+import type { Match } from '../types/match'
 
 type DayTab = 'yesterday' | 'today' | 'tomorrow'
 
-const IMPORTANT_LEAGUE_KEYWORDS = [
-  'uefa champions league',
-  'champions league',
-  'uefa europa league',
-  'europa league',
-  'premier league',
-  'la liga',
-  'serie a',
-  'bundesliga',
-  'ligue 1',
-  'fifa world cup',
-  'world cup',
-  'friendly',
-  'concacaf',
-  'afc champions',
-  'caf champions',
-]
-
-const IMPORTANT_TEAM_KEYWORDS = [
-  'barcelona',
-  'bayern',
-  'real madrid',
-  'manchester city',
-  'manchester united',
-  'liverpool',
-  'arsenal',
-  'chelsea',
-  'psg',
-  'juventus',
-  'inter',
-  'milan',
-  'morocco',
-  'maroc',
-  'france',
-  'argentina',
-  'brazil',
-  'germany',
-  'england',
-  'spain',
-  'portugal',
-]
-
-const EXCLUDED_KEYWORDS = [
-  'women',
-  'feminine',
-  'femenina',
-  'féminine',
-  'ladies',
-  'girls',
-  'u17',
-  'u18',
-  'u19',
-  'u20',
-  'u21',
-  'u23',
-  'reserve',
-  'reserves',
-  'youth',
-  'academy',
-  'futsal',
-]
-
-const getCairoDate = (dayOffset: number): string => {
+const getCairoIsoDate = (dayOffset: number): string => {
   const base = new Date()
-  base.setUTCDate(base.getUTCDate() + dayOffset)
+  base.setDate(base.getDate() + dayOffset)
 
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Africa/Cairo',
@@ -87,114 +26,73 @@ const getCairoDate = (dayOffset: number): string => {
   return `${year}-${month}-${day}`
 }
 
+const byKickoffTime = (a: Match, b: Match): number => a.kickoffTime.localeCompare(b.kickoffTime)
+
+const toDateTs = (isoDate: string): number => new Date(`${isoDate}T00:00:00`).getTime()
+
 const HomePage = () => {
   const [activeDay, setActiveDay] = useState<DayTab>('today')
-  const [tabLoading, setTabLoading] = useState(false)
-  const tabTimerRef = useRef<number | null>(null)
   const { language, t } = useLanguage()
   const { theme } = useTheme()
   const isRtl = language === 'ar'
   const isDark = theme === 'dark'
   const { data: allMatches, loading, error } = useMatches()
-  const fallbackToday = getCairoDate(0)
-  const fallbackYesterday = getCairoDate(-1)
-  const fallbackTomorrow = getCairoDate(1)
-
   const dayToDateMap = useMemo(() => {
+    const fallback: Record<DayTab, string> = {
+      yesterday: getCairoIsoDate(-1),
+      today: getCairoIsoDate(0),
+      tomorrow: getCairoIsoDate(1),
+    }
+
     const uniqueDates = Array.from(new Set(allMatches.map((match) => match.date))).sort()
     if (uniqueDates.length === 0) {
+      return fallback
+    }
+    if (uniqueDates.length === 1) {
       return {
-        yesterday: fallbackYesterday,
-        today: fallbackToday,
-        tomorrow: fallbackTomorrow,
+        yesterday: uniqueDates[0],
+        today: uniqueDates[0],
+        tomorrow: uniqueDates[0],
+      } satisfies Record<DayTab, string>
+    }
+    if (uniqueDates.length === 2) {
+      return {
+        yesterday: uniqueDates[0],
+        today: uniqueDates[1],
+        tomorrow: uniqueDates[1],
       } satisfies Record<DayTab, string>
     }
 
-    const todayTs = new Date(fallbackToday).getTime()
-    let nearestIndex = 0
-    let nearestDiff = Number.POSITIVE_INFINITY
-
-    uniqueDates.forEach((date, index) => {
-      const diff = Math.abs(new Date(date).getTime() - todayTs)
-      if (diff < nearestDiff) {
-        nearestDiff = diff
-        nearestIndex = index
-      }
-    })
+    const todayTs = toDateTs(fallback.today)
+    const nearestIndexRaw = uniqueDates.reduce((bestIndex, date, index) => {
+      const bestDiff = Math.abs(toDateTs(uniqueDates[bestIndex]) - todayTs)
+      const currentDiff = Math.abs(toDateTs(date) - todayTs)
+      return currentDiff < bestDiff ? index : bestIndex
+    }, 0)
+    const nearestIndex = Math.min(Math.max(nearestIndexRaw, 1), uniqueDates.length - 2)
 
     return {
-      yesterday: uniqueDates[Math.max(nearestIndex - 1, 0)],
+      yesterday: uniqueDates[Math.max(0, nearestIndex - 1)],
       today: uniqueDates[nearestIndex],
-      tomorrow: uniqueDates[Math.min(nearestIndex + 1, uniqueDates.length - 1)],
+      tomorrow: uniqueDates[Math.min(uniqueDates.length - 1, nearestIndex + 1)],
     } satisfies Record<DayTab, string>
-  }, [allMatches, fallbackToday, fallbackTomorrow, fallbackYesterday])
+  }, [allMatches])
 
   const selectedDate = dayToDateMap[activeDay]
   const activeIndex = activeDay === 'yesterday' ? 0 : activeDay === 'today' ? 1 : 2
 
-  const handleTabChange = (day: DayTab) => {
-    if (day === activeDay) return
-    setTabLoading(true)
-    setActiveDay(day)
-    if (tabTimerRef.current) {
-      window.clearTimeout(tabTimerRef.current)
-    }
-    tabTimerRef.current = window.setTimeout(() => {
-      setTabLoading(false)
-    }, 180)
-  }
-
-  useEffect(() => {
-    return () => {
-      if (tabTimerRef.current) {
-        window.clearTimeout(tabTimerRef.current)
-      }
-    }
-  }, [])
-
   const filteredMatches = useMemo(() => {
-    const matchesByDate = allMatches.filter((match) => match.date === selectedDate)
+    const matchesByDate = allMatches.filter((match) => match.date === selectedDate).sort(byKickoffTime)
 
-    const nonExcluded = matchesByDate.filter((match) => {
-      const text = `${match.competitionName ?? match.league} ${match.homeTeam.name} ${match.awayTeam.name}`.toLowerCase()
-      return !EXCLUDED_KEYWORDS.some((keyword) => text.includes(keyword))
-    })
-
-    const importantOnly = nonExcluded.filter((match) => {
-      const leagueText = (match.competitionName ?? match.league).toLowerCase()
-      const teamsText = `${match.homeTeam.name} ${match.awayTeam.name}`.toLowerCase()
-
-      const importantLeague = IMPORTANT_LEAGUE_KEYWORDS.some((keyword) =>
-        leagueText.includes(keyword),
-      )
-      const importantTeams = IMPORTANT_TEAM_KEYWORDS.some((keyword) =>
-        teamsText.includes(keyword),
-      )
-
-      return match.status === 'LIVE' || importantLeague || importantTeams
-    })
-
-    const scoreMatch = (match: (typeof importantOnly)[number]): number => {
-      const competition = (match.competitionName ?? match.league).toLowerCase()
-      const isImportantLeague = IMPORTANT_LEAGUE_KEYWORDS.some((keyword) =>
-        competition.includes(keyword),
-      )
-
-      let score = 0
-      if (match.status === 'LIVE') score += 100
-      if (match.status === 'UPCOMING') score += 40
-      if (isImportantLeague) score += 60
-      if (match.score) score += 5
-      if (match.stadium) score += 2
-
-      return score
+    if (activeDay === 'yesterday') {
+      return matchesByDate.filter((match) => match.status === 'FINISHED')
     }
 
-    const sourceMatches = importantOnly.length > 0 ? importantOnly : nonExcluded
-    const sorted = [...sourceMatches].sort((a, b) => scoreMatch(b) - scoreMatch(a))
+    if (activeDay === 'tomorrow') {
+      return matchesByDate.filter((match) => match.status === 'UPCOMING')
+    }
 
-    // Smart list: show only the most relevant matches.
-    return sorted.slice(0, 12)
+    return matchesByDate
   }, [allMatches, selectedDate])
 
   return (
@@ -267,7 +165,7 @@ const HomePage = () => {
             <div className="relative grid grid-cols-3">
               <button
                 type="button"
-                onClick={() => handleTabChange('yesterday')}
+                onClick={() => setActiveDay('yesterday')}
                 className={`rounded-full py-2 text-sm font-bold transition ${
                   activeDay === 'yesterday'
                     ? isDark ? 'text-slate-900' : 'text-white'
@@ -278,7 +176,7 @@ const HomePage = () => {
               </button>
               <button
                 type="button"
-                onClick={() => handleTabChange('today')}
+                onClick={() => setActiveDay('today')}
                 className={`rounded-full py-2 text-sm font-bold transition ${
                   activeDay === 'today'
                     ? isDark ? 'text-slate-900' : 'text-white'
@@ -289,7 +187,7 @@ const HomePage = () => {
               </button>
               <button
                 type="button"
-                onClick={() => handleTabChange('tomorrow')}
+                onClick={() => setActiveDay('tomorrow')}
                 className={`rounded-full py-2 text-sm font-bold transition ${
                   activeDay === 'tomorrow'
                     ? isDark ? 'text-slate-900' : 'text-white'
@@ -303,13 +201,17 @@ const HomePage = () => {
         </div>
 
         <div className="relative mx-auto mt-6 flex max-w-[800px] flex-col gap-4">
-          {error && <p className={`rounded-xl p-3 text-center ${isDark ? 'bg-rose-500/15 text-rose-100' : 'bg-rose-100 text-rose-700'}`}>{t(error)}</p>}
+          {error && (
+            <p className={`rounded-xl p-3 text-center ${isDark ? 'bg-rose-500/15 text-rose-100' : 'bg-rose-100 text-rose-700'}`}>
+              {t(error)}
+            </p>
+          )}
 
           {!loading && filteredMatches.length === 0 && (
             <p className={`rounded-xl p-4 text-center ${isDark ? 'bg-white/10 text-slate-100' : 'bg-white/80 text-slate-700'}`}>{t('home.empty')}</p>
           )}
 
-          {!loading && !tabLoading && filteredMatches.map((match) => (
+          {!loading && filteredMatches.map((match) => (
             <FriendlyMatchCard
               key={match.id}
               match={match}
@@ -321,7 +223,7 @@ const HomePage = () => {
             />
           ))}
 
-          {(loading || tabLoading) && (
+          {loading && (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, index) => (
                 <div
