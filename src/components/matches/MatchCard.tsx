@@ -76,7 +76,6 @@ const MatchCard = ({ match }: MatchCardProps) => {
           </Link>
         </div>
       </div>
-      {/* preserve card spacing and avoid sudden layout changes */}
       <div className="sr-only">
         {match.homeTeam.name} vs {match.awayTeam.name}
       </div>

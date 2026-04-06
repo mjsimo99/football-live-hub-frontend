@@ -35,7 +35,6 @@ const FriendlyMatchCard = ({
     },
   } as const
 
-  // Score follows visual order: left team - right team.
   const centerText =
     match.status === 'UPCOMING'
       ? match.kickoffTime

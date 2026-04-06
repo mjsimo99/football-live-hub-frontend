@@ -30,6 +30,41 @@ const byKickoffTime = (a: Match, b: Match): number => a.kickoffTime.localeCompar
 
 const toDateTs = (isoDate: string): number => new Date(`${isoDate}T00:00:00`).getTime()
 
+const buildDateMap = (matches: Match[]): Record<DayTab, string> => {
+  const fallback = {
+    yesterday: getCairoIsoDate(-1),
+    today: getCairoIsoDate(0),
+    tomorrow: getCairoIsoDate(1),
+  }
+
+  const uniqueDates = Array.from(new Set(matches.map((match) => match.date))).sort()
+  if (uniqueDates.length === 0) return fallback
+  if (uniqueDates.length === 1) return { yesterday: uniqueDates[0], today: uniqueDates[0], tomorrow: uniqueDates[0] }
+  if (uniqueDates.length === 2) return { yesterday: uniqueDates[0], today: uniqueDates[1], tomorrow: uniqueDates[1] }
+
+  const todayTs = toDateTs(fallback.today)
+  const nearestIndex = uniqueDates.reduce((bestIndex, date, index) => {
+    const bestDiff = Math.abs(toDateTs(uniqueDates[bestIndex]) - todayTs)
+    const currentDiff = Math.abs(toDateTs(date) - todayTs)
+    return currentDiff < bestDiff ? index : bestIndex
+  }, 0)
+
+  const centerIndex = Math.min(Math.max(nearestIndex, 1), uniqueDates.length - 2)
+  return {
+    yesterday: uniqueDates[centerIndex - 1],
+    today: uniqueDates[centerIndex],
+    tomorrow: uniqueDates[centerIndex + 1],
+  }
+}
+
+const getMatchesForTab = (matches: Match[], selectedDate: string, tab: DayTab): Match[] => {
+  const byDate = matches.filter((match) => match.date === selectedDate).sort(byKickoffTime)
+
+  if (tab === 'yesterday') return byDate.filter((match) => match.status === 'FINISHED')
+  if (tab === 'tomorrow') return byDate.filter((match) => match.status === 'UPCOMING')
+  return byDate
+}
+
 const HomePage = () => {
   const [activeDay, setActiveDay] = useState<DayTab>('today')
   const { language, t } = useLanguage()
@@ -37,63 +72,15 @@ const HomePage = () => {
   const isRtl = language === 'ar'
   const isDark = theme === 'dark'
   const { data: allMatches, loading, error } = useMatches()
-  const dayToDateMap = useMemo(() => {
-    const fallback: Record<DayTab, string> = {
-      yesterday: getCairoIsoDate(-1),
-      today: getCairoIsoDate(0),
-      tomorrow: getCairoIsoDate(1),
-    }
-
-    const uniqueDates = Array.from(new Set(allMatches.map((match) => match.date))).sort()
-    if (uniqueDates.length === 0) {
-      return fallback
-    }
-    if (uniqueDates.length === 1) {
-      return {
-        yesterday: uniqueDates[0],
-        today: uniqueDates[0],
-        tomorrow: uniqueDates[0],
-      } satisfies Record<DayTab, string>
-    }
-    if (uniqueDates.length === 2) {
-      return {
-        yesterday: uniqueDates[0],
-        today: uniqueDates[1],
-        tomorrow: uniqueDates[1],
-      } satisfies Record<DayTab, string>
-    }
-
-    const todayTs = toDateTs(fallback.today)
-    const nearestIndexRaw = uniqueDates.reduce((bestIndex, date, index) => {
-      const bestDiff = Math.abs(toDateTs(uniqueDates[bestIndex]) - todayTs)
-      const currentDiff = Math.abs(toDateTs(date) - todayTs)
-      return currentDiff < bestDiff ? index : bestIndex
-    }, 0)
-    const nearestIndex = Math.min(Math.max(nearestIndexRaw, 1), uniqueDates.length - 2)
-
-    return {
-      yesterday: uniqueDates[Math.max(0, nearestIndex - 1)],
-      today: uniqueDates[nearestIndex],
-      tomorrow: uniqueDates[Math.min(uniqueDates.length - 1, nearestIndex + 1)],
-    } satisfies Record<DayTab, string>
-  }, [allMatches])
+  const dayToDateMap = useMemo(() => buildDateMap(allMatches), [allMatches])
 
   const selectedDate = dayToDateMap[activeDay]
   const activeIndex = activeDay === 'yesterday' ? 0 : activeDay === 'today' ? 1 : 2
 
-  const filteredMatches = useMemo(() => {
-    const matchesByDate = allMatches.filter((match) => match.date === selectedDate).sort(byKickoffTime)
-
-    if (activeDay === 'yesterday') {
-      return matchesByDate.filter((match) => match.status === 'FINISHED')
-    }
-
-    if (activeDay === 'tomorrow') {
-      return matchesByDate.filter((match) => match.status === 'UPCOMING')
-    }
-
-    return matchesByDate
-  }, [allMatches, selectedDate])
+  const filteredMatches = useMemo(
+    () => getMatchesForTab(allMatches, selectedDate, activeDay),
+    [allMatches, selectedDate, activeDay],
+  )
 
   return (
     <>

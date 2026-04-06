@@ -48,9 +48,7 @@ const MatchDetailsPage = () => {
       try {
         const updated = await getMatchById(matchId)
         setMatch(updated)
-      } catch {
-        // Keep current match state; avoid disruptive UI changes while auto-refreshing.
-      }
+      } catch {}
     }, 30000)
 
     return () => window.clearInterval(intervalId)

@@ -8,6 +8,10 @@ import { useTheme } from '../context/ThemeContext'
 const MainLayout = () => {
   const { language } = useLanguage()
   const { theme } = useTheme()
+  const pageClassName =
+    theme === 'dark'
+      ? 'min-h-screen bg-slate-950 text-slate-100'
+      : 'min-h-screen bg-slate-100 text-slate-900'
 
   useEffect(() => {
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr'
@@ -15,9 +19,9 @@ const MainLayout = () => {
   }, [language])
 
   return (
-    <div className={theme === 'dark' ? 'min-h-screen bg-slate-950 text-slate-100' : 'min-h-screen bg-slate-100 text-slate-900'}>
+    <div className={`${pageClassName} flex flex-col`}>
       <Navbar />
-      <main className="mx-auto max-w-6xl px-4 py-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
         <Outlet />
       </main>
       <Footer />

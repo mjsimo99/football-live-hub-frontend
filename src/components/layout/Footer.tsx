@@ -7,7 +7,7 @@ const Footer = () => {
   const isDark = theme === 'dark'
 
   return (
-    <footer className={`mt-12 border-t ${isDark ? 'border-slate-700/60 bg-slate-950' : 'border-slate-300 bg-white'}`}>
+    <footer className={`border-t ${isDark ? 'border-slate-700/60 bg-slate-950' : 'border-slate-300 bg-white'}`}>
       <div
         className={`mx-auto flex max-w-6xl flex-col gap-3 p-6 text-sm md:flex-row md:items-center md:justify-between ${
           isDark ? 'text-slate-400' : 'text-slate-600'
