@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "Football Live"
+  },
+  "navbar": {
+    "menu": "Menu",
+    "home": "Inicio",
+    "search": "Buscar",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro",
+    "languageLabel": "Idioma"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "privacy": "Privacidad",
+    "terms": "Terminos",
+    "contact": "Contacto"
+  },
+  "home": {
+    "pageTitle": "Partidos amistosos internacionales",
+    "seoDescription": "Pagina moderna de partidos de futbol con amistosos internacionales en vivo.",
+    "introTitle": "Centro de partidos en vivo",
+    "introText": "Sigue los amistosos internacionales en tiempo real con tarjetas limpias, estados claros y acceso rapido a los detalles.",
+    "timezone": "Hora de El Cairo",
+    "schedule": "Calendario de partidos",
+    "yesterday": "Partidos de ayer",
+    "today": "Partidos de hoy",
+    "tomorrow": "Partidos de manana",
+    "live": "En vivo",
+    "upcoming": "No iniciado",
+    "finished": "Finalizado",
+    "competition": "Competicion",
+    "channel": "Canal",
+    "empty": "No se encontraron partidos amistosos internacionales para este dia."
+  },
+  "search": {
+    "title": "Buscar y filtrar",
+    "seoDescription": "Filtra partidos por liga, fecha y estado.",
+    "allLeagues": "Todas las ligas",
+    "allStatus": "Todos los estados",
+    "live": "En vivo",
+    "upcoming": "Proximamente",
+    "finished": "Finalizado"
+  },
+  "match": {
+    "detailsButton": "Detalles del partido",
+    "notFound": "Partido no encontrado",
+    "loadDetailsError": "No se pudieron cargar los detalles del partido.",
+    "playerTitle": "Reproductor del partido",
+    "liveCenterTitle": "Centro del partido en vivo",
+    "liveCenterDescription": "Los detalles en vivo se muestran en esta pagina y se actualizan automaticamente.",
+    "liveMinute": "Minuto",
+    "seoDescriptionSuffix": "transmision en vivo y detalles del partido.",
+    "channelFallback": "No disponible"
+  },
+  "notFound": {
+    "title": "Pagina no encontrada",
+    "description": "No se pudo encontrar la pagina solicitada.",
+    "message": "La pagina que buscas no existe.",
+    "backHome": "Volver al inicio"
+  },
+  "common": {
+    "loadMatchesError": "No se pudieron cargar los partidos. Intentalo de nuevo."
+  }
+}

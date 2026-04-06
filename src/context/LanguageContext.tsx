@@ -2,7 +2,7 @@ import { createContext, startTransition, useCallback, useContext, useMemo, useSt
 import type { ReactNode } from 'react'
 import { translate } from '../utils/i18n'
 
-export type LanguageCode = 'en' | 'fr' | 'ar'
+export type LanguageCode = 'en' | 'fr' | 'ar' | 'es'
 
 interface LanguageContextValue {
   language: LanguageCode

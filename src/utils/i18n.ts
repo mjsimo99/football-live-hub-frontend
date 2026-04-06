@@ -1,9 +1,10 @@
 import ar from '../i18n/ar.json'
 import en from '../i18n/en.json'
+import es from '../i18n/es.json'
 import fr from '../i18n/fr.json'
 import type { LanguageCode } from '../context/LanguageContext'
 
-const dictionaries = { en, fr, ar } as const
+const dictionaries = { en, fr, ar, es } as const
 
 const getNestedValue = (obj: unknown, path: string): string | undefined => {
   return path.split('.').reduce<unknown>((acc, key) => {

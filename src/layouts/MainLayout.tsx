@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { useEffect } from 'react'
 import Footer from '../components/layout/Footer'
 import Navbar from '../components/layout/Navbar'
+import TopLoader from '../components/common/TopLoader'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
 
@@ -20,6 +21,7 @@ const MainLayout = () => {
 
   return (
     <div className={`${pageClassName} flex flex-col`}>
+      <TopLoader direction={language === 'ar' ? 'rtl' : 'ltr'} />
       <Navbar />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
         <Outlet />
