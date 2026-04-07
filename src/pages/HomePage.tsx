@@ -28,35 +28,6 @@ const getCairoIsoDate = (dayOffset: number): string => {
 
 const byKickoffTime = (a: Match, b: Match): number => a.kickoffTime.localeCompare(b.kickoffTime)
 
-const toDateTs = (isoDate: string): number => new Date(`${isoDate}T00:00:00`).getTime()
-
-const buildDateMap = (matches: Match[]): Record<DayTab, string> => {
-  const fallback = {
-    yesterday: getCairoIsoDate(-1),
-    today: getCairoIsoDate(0),
-    tomorrow: getCairoIsoDate(1),
-  }
-
-  const uniqueDates = Array.from(new Set(matches.map((match) => match.date))).sort()
-  if (uniqueDates.length === 0) return fallback
-  if (uniqueDates.length === 1) return { yesterday: uniqueDates[0], today: uniqueDates[0], tomorrow: uniqueDates[0] }
-  if (uniqueDates.length === 2) return { yesterday: uniqueDates[0], today: uniqueDates[1], tomorrow: uniqueDates[1] }
-
-  const todayTs = toDateTs(fallback.today)
-  const nearestIndex = uniqueDates.reduce((bestIndex, date, index) => {
-    const bestDiff = Math.abs(toDateTs(uniqueDates[bestIndex]) - todayTs)
-    const currentDiff = Math.abs(toDateTs(date) - todayTs)
-    return currentDiff < bestDiff ? index : bestIndex
-  }, 0)
-
-  const centerIndex = Math.min(Math.max(nearestIndex, 1), uniqueDates.length - 2)
-  return {
-    yesterday: uniqueDates[centerIndex - 1],
-    today: uniqueDates[centerIndex],
-    tomorrow: uniqueDates[centerIndex + 1],
-  }
-}
-
 const getMatchesForTab = (matches: Match[], selectedDate: string, tab: DayTab): Match[] => {
   const byDate = matches.filter((match) => match.date === selectedDate).sort(byKickoffTime)
 
@@ -71,10 +42,16 @@ const HomePage = () => {
   const { theme } = useTheme()
   const isRtl = language === 'ar'
   const isDark = theme === 'dark'
-  const { data: allMatches, loading, error } = useMatches()
-  const dayToDateMap = useMemo(() => buildDateMap(allMatches), [allMatches])
-
+  const dayToDateMap = useMemo(
+    () => ({
+      yesterday: getCairoIsoDate(-1),
+      today: getCairoIsoDate(0),
+      tomorrow: getCairoIsoDate(1),
+    }),
+    [],
+  )
   const selectedDate = dayToDateMap[activeDay]
+  const { data: allMatches, loading, error } = useMatches({ date: selectedDate })
   const activeIndex = activeDay === 'yesterday' ? 0 : activeDay === 'today' ? 1 : 2
 
   const filteredMatches = useMemo(
@@ -212,11 +189,30 @@ const HomePage = () => {
 
           {loading && (
             <div className="space-y-3">
+              <p
+                className={`rounded-xl px-4 py-2 text-center text-sm font-semibold ${
+                  isDark ? 'bg-white/10 text-slate-200' : 'bg-white/80 text-slate-700'
+                }`}
+              >
+                {t('common.loading')}
+              </p>
               {Array.from({ length: 3 }).map((_, index) => (
                 <div
                   key={index}
-                  className="h-32 animate-pulse rounded-2xl border border-white/25 bg-white/20 backdrop-blur"
-                />
+                  className={`overflow-hidden rounded-2xl border p-4 ${
+                    isDark ? 'border-white/15 bg-slate-900/45' : 'border-slate-200 bg-white/85'
+                  }`}
+                >
+                  <div className="animate-pulse space-y-3">
+                    <div className={`h-4 w-40 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`} />
+                    <div className="grid grid-cols-3 items-center gap-3">
+                      <div className={`h-10 rounded-xl ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`} />
+                      <div className={`h-6 rounded-lg ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`} />
+                      <div className={`h-10 rounded-xl ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`} />
+                    </div>
+                    <div className={`h-3 w-full rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`} />
+                  </div>
+                </div>
               ))}
             </div>
           )}

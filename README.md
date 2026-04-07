@@ -50,13 +50,14 @@ src/
   utils/
 ```
 
-## Static API (Current Setup)
+## Live API Only
 
-The app currently uses static API data from:
+The app now uses real fixtures from TheSportsDB free API only.
 
-- `public/mock/matches.json`
+- Live API base URL env: `VITE_SPORTSDB_BASE_URL` (default: `https://www.thesportsdb.com/api/v1/json`)
+- Live API key env: `VITE_SPORTSDB_API_KEY` (free public key: `123`)
 
-Axios reads this JSON through `src/services/api/api.ts` to simulate backend integration cleanly.
+All API logic is inside `src/services/api/api.ts`.
 
 ## Scripts
 
@@ -73,13 +74,21 @@ Axios reads this JSON through `src/services/api/api.ts` to simulate backend inte
 npm install
 ```
 
-2. Start dev server:
+2. Create/update `.env`:
+
+```bash
+VITE_FOOTBALL_API_BASE_URL=https://v3.football.api-sports.io
+VITE_SPORTSDB_BASE_URL=https://www.thesportsdb.com/api/v1/json
+VITE_SPORTSDB_API_KEY=123
+```
+
+3. Start dev server:
 
 ```bash
 npm run dev
 ```
 
-3. Build production:
+4. Build production:
 
 ```bash
 npm run build
@@ -87,7 +96,6 @@ npm run build
 
 ## Notes For Future Developers
 
-- Replace `/mock/matches.json` with real backend endpoints when API is ready.
 - Keep API logic inside `services/api` and avoid API calls directly in UI components.
 - Shared live state is managed via `LiveMatchesContext`.
 - Maintain reusability by extending existing components before creating duplicates.
